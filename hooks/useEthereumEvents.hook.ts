@@ -21,6 +21,7 @@ export function useEthereumEvents(store: RootStore) {
        * disconnect
        */
       store.provider.provider.on(ETHEREUM.ON_DISCONNECT, () => {
+        console.log("disconnected");
         store.provider.setAccounts([]);
       });
     }

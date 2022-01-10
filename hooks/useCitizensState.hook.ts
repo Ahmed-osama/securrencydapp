@@ -9,5 +9,10 @@ export const useCitizensState = (store: RootStore) => {
     displayedPaginationList: store.citizens.displayedPaginationList,
     displayedCitizens: store.citizens.displayedCitizens,
     setPage: store.citizens.setPage,
+    lastPage: store.citizens.lastPage,
+    toTheBeginning: store.citizens.toTheBeginning,
+    toTheEnd: store.citizens.toTheEnd,
+    nextPage: store.citizens.nextPage,
+    prevPage: store.citizens.prevPage,
   }));
 };

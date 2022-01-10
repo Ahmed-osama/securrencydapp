@@ -1,11 +1,21 @@
 import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
+import {
   Box,
   Button,
   Container,
+  Flex,
   Heading,
   Stack,
   Table,
   TableCaption,
+  TagLeftIcon,
   Tbody,
   Td,
   Th,
@@ -27,14 +37,30 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
     displayedPaginationList,
     displayedCitizens,
     setPage,
+    lastPage,
+    toTheBeginning,
+    toTheEnd,
+    nextPage,
+    prevPage,
   } = useCitizensState(store);
   console.log(displayedCitizens);
   return (
     <Container maxW="container.lg">
-      <Heading mt={5} mb={5}>
-        Citizens List
-      </Heading>
-      <Table variant="simple" mb={10}>
+      <Flex
+        flexDirection="row"
+        justifyContent={"space-between"}
+        mb={5}
+        alignItems="center"
+        mt={5}
+      >
+        <Heading as="h1" size={"lg"}>
+          Citizens List
+        </Heading>
+        <Heading as="h1" size={"sm"}>
+          total records : {totalCount}
+        </Heading>
+      </Flex>
+      <Table variant="simple" mb={10} shadow="base">
         <Thead>
           <Tr>
             <Th>id</Th>
@@ -58,7 +84,28 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
       </Table>
 
       <Stack spacing={4} direction="row" align="center" justify={"center"}>
+        {currentPage != 0 && (
+          <Button
+            colorScheme={"gray"}
+            size={"sm"}
+            key={"ArrowBackIcon"}
+            onClick={toTheBeginning}
+          >
+            <ArrowBackIcon />
+          </Button>
+        )}
+        {currentPage != 0 && (
+          <Button
+            colorScheme={"gray"}
+            size={"sm"}
+            key={"ChevronLeftIcon"}
+            onClick={prevPage}
+          >
+            <ChevronLeftIcon />
+          </Button>
+        )}
         {_map(displayedPaginationList, (page) => {
+          console.log(currentPage, page);
           return (
             <Button
               colorScheme={currentPage === page ? "teal" : "gray"}
@@ -70,6 +117,27 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
             </Button>
           );
         })}
+
+        {currentPage != lastPage && (
+          <Button
+            colorScheme={"gray"}
+            size={"sm"}
+            key={"start"}
+            onClick={nextPage}
+          >
+            <ChevronRightIcon />
+          </Button>
+        )}
+        {currentPage != lastPage && (
+          <Button
+            key="ArrowForwardIcon"
+            colorScheme={"gray"}
+            size={"sm"}
+            onClick={toTheEnd}
+          >
+            <ArrowForwardIcon />
+          </Button>
+        )}
       </Stack>
     </Container>
   );
