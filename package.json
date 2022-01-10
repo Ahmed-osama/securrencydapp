@@ -8,11 +8,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.7.4",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "contracts": "file:./contracts",
+    "framer-motion": "^5.5.6",
+    "lodash": "^4.17.21",
+    "mobx": "^6.3.12",
     "next": "12.0.7",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "web3": "^1.6.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.178",
     "@types/node": "17.0.8",
     "@types/react": "17.0.38",
     "eslint": "8.6.0",
