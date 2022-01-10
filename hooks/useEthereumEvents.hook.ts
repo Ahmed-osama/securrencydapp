@@ -41,6 +41,10 @@ export function useEthereumEvents(store: RootStore) {
         });
         store.provider.setAccounts([]);
       });
+      return () => {
+        store.provider.provider.off(ETHEREUM.ON_ACCOUNT_CHANGED);
+        store.provider.provider.off(ETHEREUM.ON_DISCONNECT);
+      };
     }
   }, []);
 }

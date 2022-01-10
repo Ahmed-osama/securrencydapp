@@ -17,18 +17,25 @@ import {
 } from "@chakra-ui/react";
 
 import RootStore from "../../stores/index.store";
+import _get from "lodash/get";
 import { isLoading } from "../../utils/store.utils";
 import { useAddCitizenState } from "../../hooks/useAddCitizenState.hook";
 import { useCitizensFetch } from "../../hooks/useCitizensFetch.hook";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 
 const AddCitizenScreen = ({ store }: { store: RootStore }) => {
   useCitizensFetch(store);
   const { addCitizen, currentAccount, isConnected, addCitizenState } =
     useAddCitizenState(store);
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const toast = useToast();
   const isAddCitizenLoading = isLoading(addCitizenState);
+  const router = useRouter();
   return (
     <Container
       maxW="container.lg"
@@ -66,7 +73,8 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
               addCitizen({
                 ...formData,
                 sender: currentAccount,
-                successHandler() {
+                successHandler(data: any) {
+                  console.log(data);
                   toast({
                     title: "Citizen created.",
                     description: "We've created citizen successfully.",
@@ -74,8 +82,11 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                     duration: 4000,
                     isClosable: true,
                   });
+                  router.push(
+                    `/${_get(data, "events.Citizen.returnValues.id")}`
+                  );
                 },
-                errorHandler(err) {
+                errorHandler(err: any) {
                   console.log(err);
                   toast({
                     title: "Failure",
@@ -107,7 +118,13 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                 type="text"
                 label="Name"
                 {...register("name", { required: "name is required field" })}
+                isInvalid={errors?.name}
               />
+              {errors?.name && (
+                <Text mt={1} as="span" color="tomato" fontSize={"12px"}>
+                  {errors?.name?.message}
+                </Text>
+              )}
             </Flex>
             <Flex flexDirection="column" flexBasis="33.33%" ps={5} pe={5}>
               <Text mb={2} as="label" htmlFor="age-input" fontWeight="bold">
@@ -119,7 +136,13 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                 type="number"
                 label="age"
                 {...register("age", { required: "age is required field" })}
+                isInvalid={errors?.age}
               />
+              {errors?.age && (
+                <Text mt={1} as="span" color="tomato" fontSize={"12px"}>
+                  {errors?.age?.message}
+                </Text>
+              )}
             </Flex>
             <Flex flexDirection="column" flexBasis="33.33%" ps={5} pe={5}>
               <Text mb={2} as="label" htmlFor="city-input" fontWeight="bold">
@@ -131,7 +154,13 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                 type="text"
                 label="city"
                 {...register("city", { required: "city is required field" })}
+                isInvalid={errors?.city}
               />
+              {errors?.city && (
+                <Text mt={1} as="span" color="tomato" fontSize={"12px"}>
+                  {errors?.city?.message}
+                </Text>
+              )}
             </Flex>
             <Flex flexDirection="column" flexBasis="100%" ps={5} pe={5} mt={5}>
               <Text mb={2} as="label" htmlFor="city-input" fontWeight="bold">
@@ -144,7 +173,13 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                 {...register("someNote", {
                   required: "someNote is required field",
                 })}
+                isInvalid={errors?.someNote}
               />
+              {errors?.someNote && (
+                <Text mt={1} as="span" color="tomato" fontSize={"12px"}>
+                  {errors?.someNote?.message}
+                </Text>
+              )}
             </Flex>
             <Flex flexDirection="column" flexBasis="100%" ps={5} pe={5} mt={5}>
               <Button
