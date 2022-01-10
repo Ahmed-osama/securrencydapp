@@ -1,38 +1,45 @@
-import { computed, action, observable } from "mobx";
-import _isUndefined from "lodash/isUndefined";
 import _head from "lodash/head";
+import _isUndefined from "lodash/isUndefined";
+import { makeAutoObservable } from "mobx";
 import Web3 from "web3";
 import { ETHEREUM } from "../constants";
 export default class ProviderStore {
   provider: any;
   constructor() {
     this.provider = (<any>global)?.ethereum;
+    makeAutoObservable(this, {}, { autoBind: true });
   }
-  @observable accounts: any = null;
 
-  @computed get hasProvider() {
+  accounts: any = null;
+
+  get hasProvider(): boolean {
     return !_isUndefined(this.provider);
   }
 
-  @computed get web3() {
+  get web3() {
     return this.hasProvider ? new Web3(this.provider) : null;
   }
 
-  @computed get currentAccount() {
+  get currentAccount(): string | undefined {
     return _head(this.accounts);
   }
+  get isConnected(): boolean {
+    return !!this.currentAccount;
+  }
 
-  @action async setAccounts(accounts: any[]) {
+  setAccounts(accounts: any[]) {
     this.accounts = accounts;
   }
-  @action async promptWalletSignIn() {
+  async promptWalletSignIn(this: ProviderStore) {
+    console.log(this);
     try {
       if (!this.hasProvider) throw new Error("client does not have Metamask");
       const accounts = await this.provider.request({
         method: ETHEREUM.REQUEST_ACCOUNT,
       });
-
       this.setAccounts(accounts);
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

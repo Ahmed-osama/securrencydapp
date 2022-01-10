@@ -1,11 +1,12 @@
 import ABI from "contracts/citizens.contract.json";
 import { Ethereum } from "../types/ethereum";
-import { observable } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 export default class Citizens {
   constructor(provider: Ethereum) {
     this.provider = provider;
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  @observable provider: Ethereum | null = null;
+  provider: Ethereum | null = null;
 }
