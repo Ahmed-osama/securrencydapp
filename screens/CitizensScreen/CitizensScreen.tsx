@@ -9,6 +9,7 @@ import {
 import {
   Box,
   Button,
+  Link as CHLink,
   Container,
   Flex,
   Heading,
@@ -23,6 +24,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 
+import Link from "next/link";
 import RootStore from "../../stores/index.store";
 import _map from "lodash/map";
 import { useCitizensFetch } from "../../hooks/useCitizensFetch.hook";
@@ -33,7 +35,6 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
   const {
     currentPage,
     totalCount,
-    paginationList,
     displayedPaginationList,
     displayedCitizens,
     setPage,
@@ -43,9 +44,14 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
     nextPage,
     prevPage,
   } = useCitizensState(store);
-  console.log(displayedCitizens);
   return (
-    <Container maxW="container.lg">
+    <Container
+      maxW="container.lg"
+      minH={"90vh"}
+      display={"flex"}
+      justifyContent={"center"}
+      flexDirection={"column"}
+    >
       <Flex
         flexDirection="row"
         justifyContent={"space-between"}
@@ -53,7 +59,7 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
         alignItems="center"
         mt={5}
       >
-        <Heading as="h1" size={"lg"}>
+        <Heading as="h1" size={"md  "}>
           Citizens List
         </Heading>
         <Heading as="h1" size={"sm"}>
@@ -74,7 +80,11 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
             return (
               <Tr key={id}>
                 <Td>{id}</Td>
-                <Td>{name}</Td>
+                <Td>
+                  <Link href={`/${id}`} passHref>
+                    <CHLink>{name}</CHLink>
+                  </Link>
+                </Td>
                 <Td isNumeric>{age}</Td>
                 <Td>city</Td>
               </Tr>

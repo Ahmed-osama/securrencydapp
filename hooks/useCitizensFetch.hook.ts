@@ -4,7 +4,7 @@ import useMapStoreStateToComponent from "./useMapStoreStateToComponent.hook";
 
 export function useCitizensFetch(store: RootStore) {
   useEffect(() => {
-    store.citizens.init();
-    store.citizens.fetchCitizens();
+    if (!store.citizens.contract) store.citizens.init();
+    if (!store.citizens.hasCitizens) store.citizens.fetchCitizens();
   }, []);
 }

@@ -1,5 +1,6 @@
-import { ADDRESSES, CITIZENS_LIST_PAGE_SIZE } from "../constants";
+import { ADDRESSES, API_STATE, CITIZENS_LIST_PAGE_SIZE } from "../constants";
 
+import { ApiState } from "../types/index.types";
 import { Citizen } from "../types/Citizen.types";
 import { Ethereum } from "../types/ethereum.types";
 import ProviderStore from "./provider.store";
@@ -21,9 +22,13 @@ export default class CitizensContractStore {
   currentPage: number = 0;
   contract: any = null;
   citizens: Citizen[] = [];
+  addCitizenState: ApiState = API_STATE.INITIAL;
 
   get totalCount(): number {
     return _size(this.citizens);
+  }
+  get hasCitizens(): boolean {
+    return this.totalCount > 0;
   }
 
   get paginationList(): number[] {
@@ -67,6 +72,35 @@ export default class CitizensContractStore {
     this.currentPage = num;
   }
 
+  async addCitizen({
+    age,
+    city,
+    name,
+    someNote,
+    sender,
+    successHandler,
+    errorHandler,
+  }: {
+    age: number;
+    city: string;
+    name: string;
+    someNote: string;
+    sender: string;
+    successHandler: (data: any) => void;
+    errorHandler: (err: any) => void;
+  }) {
+    try {
+      this.addCitizenState = API_STATE.LOADING;
+      await this.contract.methods
+        .addCitizen(age, city, name, someNote)
+        .send({ from: sender })
+        .then(successHandler);
+      this.addCitizenState = API_STATE.SUCCESS;
+    } catch (err) {
+      errorHandler(err);
+      this.addCitizenState = API_STATE.FAILED;
+    }
+  }
   init() {
     const Contract = this?.provider?.web3?.eth?.Contract;
     this.contract = new Contract(
