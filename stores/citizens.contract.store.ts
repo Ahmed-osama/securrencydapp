@@ -12,6 +12,7 @@ import _size from "lodash/size";
 import _slice from "lodash/slice";
 import { citizenFactory } from "../factory/citizen.factory";
 import citizensContractABI from "contracts/citizens.contract.json";
+import { delay } from "../utils/common.util";
 import { makeAutoObservable } from "mobx";
 
 export default class CitizensContractStore {
@@ -23,9 +24,10 @@ export default class CitizensContractStore {
   currentPage: number = 0;
   contract: any = null;
   citizens: Citizen[] = [];
-  selectedCitizen: Citizen | undefined;
+  selectedCitizen: any;
   addCitizenState: ApiState = API_STATE.INITIAL;
   selectedCitizenState: ApiState = API_STATE.INITIAL;
+  citizensListState: ApiState = API_STATE.INITIAL;
 
   get totalCount(): number {
     return _size(this.citizens);
@@ -104,6 +106,7 @@ export default class CitizensContractStore {
       this.addCitizenState = API_STATE.FAILED;
     }
   }
+
   init() {
     const Contract = this?.provider?.web3?.eth?.Contract;
     this.contract = new Contract(
@@ -118,10 +121,22 @@ export default class CitizensContractStore {
       toBlock: "latest",
     }
   ) {
-    if (this.contract) {
-      this.citizens = await this.contract.getPastEvents("Citizen", config);
+    try {
+      this.citizensListState = API_STATE.LOADING;
+      if (this.contract) {
+        this.citizens = await this.contract.getPastEvents("Citizen", config);
+        this.citizensListState = API_STATE.SUCCESS;
+      }
+    } catch (err) {
+      this.citizensListState = API_STATE.FAILED;
     }
   }
+
+  resetSelectedCitizen() {
+    this.selectedCitizenState = API_STATE.INITIAL;
+    this.selectedCitizen = {} as Citizen;
+  }
+
   async fetchOneCitizen({
     id,
     successHandler = () => {},
@@ -131,6 +146,7 @@ export default class CitizensContractStore {
     successHandler?: (data: any) => void;
     errorHandler?: (err: any) => void;
   }) {
+    this.resetSelectedCitizen();
     this.selectedCitizenState = API_STATE.LOADING;
     try {
       if (this.contract) {
@@ -139,9 +155,16 @@ export default class CitizensContractStore {
           fromBlock: 0,
           toBlock: "latest",
         });
-        this.selectedCitizen = _head(_map(selectedCitizen, citizenFactory));
-        successHandler(this.selectedCitizen);
+        this.selectedCitizen = {
+          ..._head(_map(selectedCitizen, citizenFactory)),
+        };
         this.selectedCitizenState = API_STATE.SUCCESS;
+        successHandler(this.selectedCitizen);
+
+        console.log(
+          "fetchOneCitizen -> this.selectedCitizen ",
+          this.selectedCitizen
+        );
       }
     } catch (err) {
       errorHandler(err);

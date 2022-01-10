@@ -74,7 +74,6 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                 ...formData,
                 sender: currentAccount,
                 successHandler(data: any) {
-                  console.log(data);
                   toast({
                     title: "Citizen created.",
                     description: "We've created citizen successfully.",
@@ -87,7 +86,6 @@ const AddCitizenScreen = ({ store }: { store: RootStore }) => {
                   );
                 },
                 errorHandler(err: any) {
-                  console.log(err);
                   toast({
                     title: "Failure",
                     description: "failed to create citizen",

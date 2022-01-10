@@ -115,7 +115,6 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
           </Button>
         )}
         {_map(displayedPaginationList, (page) => {
-          console.log(currentPage, page);
           return (
             <Button
               colorScheme={currentPage === page ? "teal" : "gray"}
