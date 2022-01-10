@@ -83,6 +83,10 @@ const SelectedCitizenScreen = ({ store }: { store: RootStore }) => {
                   <Th>age</Th>
                   <Td>{selectedCitizen?.age}</Td>
                 </Tr>
+                <Tr key={"note"}>
+                  <Th>note</Th>
+                  <Td>{selectedCitizen?.note}</Td>
+                </Tr>
               </Tbody>
             </Table>
           )}

@@ -14,5 +14,6 @@ export const useCitizensState = (store: RootStore) => {
     toTheEnd: store.citizens.toTheEnd,
     nextPage: store.citizens.nextPage,
     prevPage: store.citizens.prevPage,
+    citizensListState: store.citizens.citizensListState,
   }));
 };

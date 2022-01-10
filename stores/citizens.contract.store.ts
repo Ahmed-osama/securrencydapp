@@ -155,16 +155,13 @@ export default class CitizensContractStore {
           fromBlock: 0,
           toBlock: "latest",
         });
+        const note = await this.contract.methods.getNoteByCitizenId(id).call();
         this.selectedCitizen = {
           ..._head(_map(selectedCitizen, citizenFactory)),
+          note,
         };
         this.selectedCitizenState = API_STATE.SUCCESS;
         successHandler(this.selectedCitizen);
-
-        console.log(
-          "fetchOneCitizen -> this.selectedCitizen ",
-          this.selectedCitizen
-        );
       }
     } catch (err) {
       errorHandler(err);

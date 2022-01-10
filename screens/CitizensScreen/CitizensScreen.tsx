@@ -13,6 +13,7 @@ import {
   Container,
   Flex,
   Heading,
+  Spinner,
   Stack,
   Table,
   TableCaption,
@@ -27,6 +28,7 @@ import {
 import Link from "next/link";
 import RootStore from "../../stores/index.store";
 import _map from "lodash/map";
+import { isLoading } from "../../utils/store.utils";
 import { useCitizensFetch } from "../../hooks/useCitizensFetch.hook";
 import { useCitizensState } from "../../hooks/useCitizensState.hook";
 
@@ -43,7 +45,9 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
     toTheEnd,
     nextPage,
     prevPage,
+    citizensListState,
   } = useCitizensState(store);
+  const isCitizensListLoading = isLoading(citizensListState);
   return (
     <Container
       maxW="container.lg"
@@ -66,32 +70,39 @@ const CitizensScreen = ({ store }: { store: RootStore }) => {
           total records : {totalCount}
         </Heading>
       </Flex>
-      <Table variant="simple" mb={10} shadow="base">
-        <Thead>
-          <Tr>
-            <Th>id</Th>
-            <Th>name</Th>
-            <Th isNumeric>age</Th>
-            <Th>city</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {_map(displayedCitizens, ({ id, name, age, city }) => {
-            return (
-              <Tr key={id}>
-                <Td>{id}</Td>
-                <Td>
-                  <Link href={`/${id}`} passHref>
-                    <CHLink>{name}</CHLink>
-                  </Link>
-                </Td>
-                <Td isNumeric>{age}</Td>
-                <Td>city</Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
+
+      {isCitizensListLoading ? (
+        <Flex justifyContent={"center"} alignItems={"center"} minH={"200px"}>
+          <Spinner color="teal" />
+        </Flex>
+      ) : (
+        <Table variant="simple" mb={10} shadow="base">
+          <Thead>
+            <Tr>
+              <Th>id</Th>
+              <Th>name</Th>
+              <Th isNumeric>age</Th>
+              <Th>city</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {_map(displayedCitizens, ({ id, name, age, city }) => {
+              return (
+                <Tr key={id}>
+                  <Td>{id}</Td>
+                  <Td>
+                    <Link href={`/${id}`} passHref>
+                      <CHLink>{name}</CHLink>
+                    </Link>
+                  </Td>
+                  <Td isNumeric>{age}</Td>
+                  <Td>city</Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      )}
 
       <Stack spacing={4} direction="row" align="center" justify={"center"}>
         {currentPage != 0 && (
