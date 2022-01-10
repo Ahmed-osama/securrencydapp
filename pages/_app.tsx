@@ -6,7 +6,7 @@ import { initStore } from "../utils/store.utils";
 import { useEthereumEvents } from "../hooks/useEthereumEvents.hook";
 import { useState } from "react";
 function MyApp({ Component, pageProps }: AppProps) {
-  const [store] = useState(new RootStore());
+  const [store] = useState(initStore());
   useEthereumEvents(store);
   return (
     <ChakraProvider>

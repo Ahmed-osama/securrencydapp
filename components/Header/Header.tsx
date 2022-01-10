@@ -7,8 +7,6 @@ import { useHeaderState } from "../../hooks/useHeaderState.hook";
 const Header: FC<{ store: RootStore }> = ({ store }) => {
   const { promptWalletSignIn, isConnected, currentAccount } =
     useHeaderState(store);
-
-  console.log({ promptWalletSignIn, isConnected, currentAccount });
   return (
     <header>
       {!isConnected ? (

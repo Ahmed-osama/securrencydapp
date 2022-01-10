@@ -1,8 +1,9 @@
+import CitizensScreen from "../screens/CitizensScreen/CitizensScreen";
 import type { NextPage } from "next";
 import RootStore from "../stores/index.store";
 
 const Home: NextPage<{ store: RootStore }> = ({ store }) => {
-  return <h1>{store.name}</h1>;
+  return <CitizensScreen store={store} />;
 };
 
 export default Home;

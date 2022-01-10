@@ -16,7 +16,7 @@ export default class ProviderStore {
     return !_isUndefined(this.provider);
   }
 
-  get web3() {
+  get web3(): Web3 | null {
     return this.hasProvider ? new Web3(this.provider) : null;
   }
 
@@ -31,7 +31,6 @@ export default class ProviderStore {
     this.accounts = accounts;
   }
   async promptWalletSignIn(this: ProviderStore) {
-    console.log(this);
     try {
       if (!this.hasProvider) throw new Error("client does not have Metamask");
       const accounts = await this.provider.request({
