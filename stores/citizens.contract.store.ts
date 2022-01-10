@@ -4,6 +4,7 @@ import { ApiState } from "../types/index.types";
 import { Citizen } from "../types/Citizen.types";
 import { Ethereum } from "../types/ethereum.types";
 import ProviderStore from "./provider.store";
+import _head from "lodash/head";
 import _last from "lodash/last";
 import _map from "lodash/map";
 import _range from "lodash/range";
@@ -22,7 +23,9 @@ export default class CitizensContractStore {
   currentPage: number = 0;
   contract: any = null;
   citizens: Citizen[] = [];
+  selectedCitizen: Citizen | undefined;
   addCitizenState: ApiState = API_STATE.INITIAL;
+  selectedCitizenState: ApiState = API_STATE.INITIAL;
 
   get totalCount(): number {
     return _size(this.citizens);
@@ -109,12 +112,40 @@ export default class CitizensContractStore {
     );
   }
 
-  async fetchCitizens() {
+  async fetchCitizens(
+    config: Record<string, any> = {
+      fromBlock: 0,
+      toBlock: "latest",
+    }
+  ) {
     if (this.contract) {
-      this.citizens = await this.contract.getPastEvents("Citizen", {
-        fromBlock: 0,
-        toBlock: "latest",
-      });
+      this.citizens = await this.contract.getPastEvents("Citizen", config);
+    }
+  }
+  async fetchOneCitizen({
+    id,
+    successHandler = () => {},
+    errorHandler = () => {},
+  }: {
+    id: any;
+    successHandler?: (data: any) => void;
+    errorHandler?: (err: any) => void;
+  }) {
+    this.selectedCitizenState = API_STATE.LOADING;
+    try {
+      if (this.contract) {
+        const selectedCitizen = await this.contract.getPastEvents("Citizen", {
+          filter: { id },
+          fromBlock: 0,
+          toBlock: "latest",
+        });
+        this.selectedCitizen = _head(_map(selectedCitizen, citizenFactory));
+        successHandler(this.selectedCitizen);
+        this.selectedCitizenState = API_STATE.SUCCESS;
+      }
+    } catch (err) {
+      errorHandler(err);
+      this.selectedCitizenState = API_STATE.FAILED;
     }
   }
 }
